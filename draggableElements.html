@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Draggable Elements</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"/>
+<style>
+
+body,
+#app{
+	position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+}
+
+.theDiv{
+	position: absolute;
+    width: 100px;
+    height: 100px;
+    box-shadow: 0 0 10px black;
+    cursor: move;
+    border-radius: 5px;
+}
+
+.zin{
+	z-index:10;
+    background-color: lightGrey;
+}
+
+#butto{
+	position: relative;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 5px black;
+    margin: auto;
+    cursor: pointer;
+    width: 150px;
+    margin-top: 10px;
+    border-radius: 5px;
+    user-select: none;
+}
+
+#butto:active{box-shadow: 0 0 5px black inset !important;}
+
+</style>
+</head>
+<body>
+
+<div id='app'>
+	<div id='butto' @click='crea()'>{{ cr }}</div>
+	<div 
+    class='theDiv'
+    v-for='(ss,ind) in dup'
+    @mousedown='nested($event)'
+    ></div>
+</div>
+
+<script>
+let dupp = [0];
+
+new Vue({
+	el: '#app',
+    data: {
+    	cr: 'Create New',
+        dup: dupp,
+        sel: false,
+        xPos: 0,
+        yPos: 0
+    },
+    methods: {
+    	crea: function(){
+        	this.dup.push(this.dup.length - 1);
+        },
+        nested: function(e){
+        	if (e.target.classList.contains('theDiv')){
+            	this.$el.onmousemove = this.mouseMove;
+            	e.target.classList.add('zin');
+                this.xPos = e.offsetX;
+                this.yPos = e.offsetY;
+            }
+        }, 
+        mouseMove: function(e){
+			let zin = document.querySelector('.zin');
+        	zin.style.left = e.pageX - this.xPos + 'px';
+            zin.style.top = e.pageY - this.yPos + 'px';
+            window.onmouseup = this.mouseUp;
+            this.$el.onmouseleave = this.mouseUp;
+        },
+        mouseUp: function(e){
+        	e.target.classList.remove('zin');
+        }
+    }
+});
+
+</script>
+</body>
+</html>
